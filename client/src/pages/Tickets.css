@@ -1,0 +1,150 @@
+.tickets-container {
+  display: flex;
+  min-height: 100vh;
+  background: #0f172a;
+}
+
+.tickets-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.tickets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.tickets-header h1 {
+  font-size: 2rem;
+  color: #e2e8f0;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #3b82f6;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.submit-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 24px;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  font-size: 18px;
+  color: #94a3b8;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 15px 12px 45px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 1rem;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-select {
+  padding: 12px 15px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.tickets-table-container {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 24px;
+  overflow-x: auto;
+}
+
+.tickets-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tickets-table thead {
+  background: #0f172a;
+}
+
+.tickets-table th {
+  padding: 12px;
+  text-align: left;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  border-bottom: 1px solid #334155;
+}
+
+.tickets-table td {
+  padding: 16px 12px;
+  color: #e2e8f0;
+  border-bottom: 1px solid #334155;
+}
+
+.tickets-table tbody tr:hover {
+  background: #0f172a;
+}
+
+.ticket-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.ticket-link:hover {
+  color: #60a5fa;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: white;
+}

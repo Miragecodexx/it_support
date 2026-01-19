@@ -1,0 +1,16 @@
+.settings-container {
+  display: flex;
+  min-height: 100vh;
+  background: #0f172a;
+}
+
+.settings-content {
+  flex: 1;
+  padding: 30px;
+  color: #e2e8f0;
+}
+
+.settings-content h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
