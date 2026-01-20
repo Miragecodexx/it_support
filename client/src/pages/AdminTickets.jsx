@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { api } from '../utils/api';
+import { useToast } from '../context/ToastContext';
 import './Tickets.css';
 
 function AdminTickets() {
@@ -10,6 +11,9 @@ function AdminTickets() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Statuses');
   const [users, setUsers] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [dispatchData, setDispatchData] = useState({ assignee_id: '', technician: '', sent_time: '', status: '' });
 
   useEffect(() => {
     loadTickets();
@@ -37,6 +41,40 @@ function AdminTickets() {
     };
     loadUsers();
   }, []);
+  const toast = useToast();
+
+  const openModal = (ticket) => {
+    setSelectedTicket(ticket);
+    setDispatchData({
+      assignee_id: ticket.assignee_id || '',
+      technician: ticket.technician || '',
+      sent_time: ticket.sent_time ? ticket.sent_time.replace(' ', 'T') : '',
+      status: ticket.status || 'Open'
+    });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedTicket(null);
+  };
+
+  const submitDispatch = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        assignee_id: dispatchData.assignee_id ? parseInt(dispatchData.assignee_id, 10) : null,
+        technician: dispatchData.technician || null,
+        sent_time: dispatchData.sent_time || null,
+        status: dispatchData.status || null
+      };
+      await api.updateTicket(selectedTicket.id, payload);
+      closeModal();
+      loadTickets();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to update ticket');
+    }
+  };
 
   const assignTo = async (ticketId, userId) => {
     try {
@@ -44,7 +82,7 @@ function AdminTickets() {
       await api.updateTicket(ticketId, payload);
       loadTickets();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to assign ticket');
+      toast.error(err.response?.data?.error || 'Failed to assign ticket');
     }
   };
 
@@ -119,9 +157,9 @@ function AdminTickets() {
                 tickets.map((ticket) => (
                   <tr key={ticket.id}>
                     <td>
-                      <Link to={`/admin/ticket/${ticket.id}`} className="ticket-link">
+                      <a href="#" onClick={(e) => { e.preventDefault(); openModal(ticket); }} className="ticket-link">
                         #{ticket.ticket_id}
-                      </Link>
+                      </a>
                     </td>
                     <td>{ticket.subject}</td>
                     <td>{ticket.requester_name}</td>
@@ -153,6 +191,60 @@ function AdminTickets() {
           </table>
         </div>
       </div>
+      {showModal && selectedTicket && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2>Dispatch Ticket #{selectedTicket.ticket_id}</h2>
+            <form onSubmit={submitDispatch} className="dispatch-form">
+              <div className="form-group">
+                <label>Assign To</label>
+                <select
+                  value={dispatchData.assignee_id}
+                  onChange={(e) => setDispatchData({ ...dispatchData, assignee_id: e.target.value })}
+                >
+                  <option value="">Unassigned</option>
+                  {users.map((u) => (
+                    <option key={u.id} value={u.id}>{u.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Technician</label>
+                <input
+                  type="text"
+                  value={dispatchData.technician}
+                  onChange={(e) => setDispatchData({ ...dispatchData, technician: e.target.value })}
+                  placeholder="Technician name"
+                />
+              </div>
+              <div className="form-group">
+                <label>Sent Time</label>
+                <input
+                  type="datetime-local"
+                  value={dispatchData.sent_time}
+                  onChange={(e) => setDispatchData({ ...dispatchData, sent_time: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label>Status</label>
+                <select
+                  value={dispatchData.status}
+                  onChange={(e) => setDispatchData({ ...dispatchData, status: e.target.value })}
+                >
+                  <option>Open</option>
+                  <option>In Progress</option>
+                  <option>Resolved</option>
+                  <option>Closed</option>
+                </select>
+              </div>
+              <div className="form-actions">
+                <button type="button" className="cancel-btn" onClick={closeModal}>Cancel</button>
+                <button type="submit" className="submit-btn">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

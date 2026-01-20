@@ -14,7 +14,10 @@ const init = () => {
         reject(err);
       } else {
         console.log('Connected to SQLite database');
-        createTables().then(resolve).catch(reject);
+        createTables()
+          .then(() => ensureTicketColumns())
+          .then(resolve)
+          .catch(reject);
       }
     });
   });
@@ -84,8 +87,38 @@ const createTables = () => {
         FOREIGN KEY (uploaded_by) REFERENCES users(id)
       )`, (err) => {
         if (err) reject(err);
-        resolve();
+        else resolve();
       });
+      // Ensure additional columns exist on tickets for dispatch metadata
+      db.get("PRAGMA table_info('tickets')", (err) => {
+        // We'll run ALTER TABLE commands below unconditionally; if column exists, ALTER will fail silently in SQLite, so we guard per-column
+      });
+    });
+  });
+};
+
+const ensureTicketColumns = () => {
+  return new Promise((resolve) => {
+    const cols = [];
+    db.all("PRAGMA table_info('tickets')", (err, rows) => {
+      const existing = (rows || []).map(r => r.name);
+      const toAdd = [];
+      if (!existing.includes('sent_time')) toAdd.push("ALTER TABLE tickets ADD COLUMN sent_time TEXT");
+      if (!existing.includes('technician')) toAdd.push("ALTER TABLE tickets ADD COLUMN technician TEXT");
+      if (!existing.includes('sent_to')) toAdd.push("ALTER TABLE tickets ADD COLUMN sent_to TEXT");
+
+      if (toAdd.length === 0) return resolve();
+
+      // run sequentially
+      const runNext = () => {
+        const sql = toAdd.shift();
+        if (!sql) return resolve();
+        db.run(sql, (err) => {
+          // ignore errors (e.g., column exists) and continue
+          runNext();
+        });
+      };
+      runNext();
     });
   });
 };

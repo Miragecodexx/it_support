@@ -4,11 +4,13 @@ import Sidebar from '../components/Sidebar';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
 import './TicketDetail.css';
+import { useToast } from '../context/ToastContext';
 
 function TicketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const toast = useToast();
   const isAdmin = user?.role === 'admin';
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -165,6 +167,24 @@ function TicketDetail() {
             <button onClick={() => setShowReplyForm(!showReplyForm)} className="action-btn">
               <span>➕</span> Add Reply
             </button>
+            {ticket.requester_id === user?.id && (
+              <button
+                onClick={async () => {
+                  if (!window.confirm('Delete this ticket? This action cannot be undone.')) return;
+                  try {
+                    await api.deleteTicket(id);
+                    toast.success('Ticket deleted');
+                    navigate('/tickets');
+                  } catch (err) {
+                    toast.error(err.response?.data?.error || 'Failed to delete ticket');
+                  }
+                }}
+                className="cancel-btn"
+                style={{ marginLeft: 8, background: '#7f1d1d', borderColor: '#7f1d1d', color: '#fff' }}
+              >
+                🗑 Delete
+              </button>
+            )}
             {isAdmin && (
               <>
                 <select

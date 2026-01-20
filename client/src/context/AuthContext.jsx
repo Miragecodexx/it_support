@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
+import { useToast } from './ToastContext';
 
 const AuthContext = createContext();
 
@@ -16,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState(null);
+  const toast = useToast();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -68,23 +70,13 @@ export const AuthProvider = ({ children }) => {
       }
 
       s.on('ticket_created', (data) => {
-        const title = `New ticket ${data.ticketId}`;
         const body = data.subject || 'A new ticket was created';
-        if (Notification && Notification.permission === 'granted') {
-          new Notification(title, { body });
-        } else {
-          console.log('Notification:', title, body);
-        }
+        toast.info(`New ticket ${data.ticketId}: ${body}`);
       });
 
       s.on('ticket_reply', (data) => {
-        const title = `Update on ${data.ticketId}`;
         const body = `${data.from || 'Someone'}: ${data.message}`;
-        if (Notification && Notification.permission === 'granted') {
-          new Notification(title, { body });
-        } else {
-          console.log('Notification:', title, body);
-        }
+        toast.info(`Update on ${data.ticketId}: ${body}`);
       });
 
       setSocket(s);

@@ -256,7 +256,7 @@ router.post('/', authenticate, upload.array('attachments', 5), (req, res) => {
 router.put('/:id', authenticate, (req, res) => {
   const database = db.getDb();
   const ticketId = req.params.id;
-  const { status, priority, assignee_id, subject, description } = req.body;
+  const { status, priority, assignee_id, subject, description, sent_time, technician, sent_to } = req.body;
 
   // Check if user has permission
   database.get('SELECT * FROM tickets WHERE id = ? OR ticket_id = ?', [ticketId, ticketId], (err, ticket) => {
@@ -286,6 +286,18 @@ router.put('/:id', authenticate, (req, res) => {
     if (assignee_id !== undefined && req.user.role === 'admin') {
       updates.push('assignee_id = ?');
       params.push(assignee_id || null);
+    }
+    if (sent_time !== undefined && req.user.role === 'admin') {
+      updates.push('sent_time = ?');
+      params.push(sent_time || null);
+    }
+    if (technician !== undefined && req.user.role === 'admin') {
+      updates.push('technician = ?');
+      params.push(technician || null);
+    }
+    if (sent_to !== undefined && req.user.role === 'admin') {
+      updates.push('sent_to = ?');
+      params.push(sent_to || null);
     }
     if (subject !== undefined) {
       updates.push('subject = ?');
@@ -319,6 +331,48 @@ router.put('/:id', authenticate, (req, res) => {
         res.json({ message: 'Ticket updated successfully' });
       }
     );
+  });
+});
+
+// Delete ticket (owner or admin)
+router.delete('/:id', authenticate, (req, res) => {
+  const database = db.getDb();
+  const ticketId = req.params.id;
+
+  database.get('SELECT * FROM tickets WHERE id = ? OR ticket_id = ?', [ticketId, ticketId], (err, ticket) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
+
+    if (req.user.role !== 'admin' && ticket.requester_id !== req.user.id) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // remove attachments files
+    database.all('SELECT file_path FROM attachments WHERE ticket_id = ?', [ticket.id], (err, rows) => {
+      if (!err && rows) {
+        rows.forEach(r => {
+          try { if (r.file_path && fs.existsSync(r.file_path)) fs.unlinkSync(r.file_path); } catch (e) {}
+        });
+      }
+
+      // delete attachments, conversations, ticket
+      database.run('DELETE FROM attachments WHERE ticket_id = ?', [ticket.id], (err) => {
+        database.run('DELETE FROM conversations WHERE ticket_id = ?', [ticket.id], (err) => {
+          database.run('DELETE FROM tickets WHERE id = ?', [ticket.id], (err) => {
+            if (err) return res.status(500).json({ error: 'Database error' });
+
+            // notify via sockets
+            try {
+              const io = socketManager.getIo();
+              io.to('role_admin').emit('ticket_deleted', { ticketId: ticket.ticket_id });
+              io.to(`user_${ticket.requester_id}`).emit('ticket_deleted', { ticketId: ticket.ticket_id });
+            } catch (e) {}
+
+            res.json({ message: 'Ticket deleted successfully' });
+          });
+        });
+      });
+    });
   });
 });
 

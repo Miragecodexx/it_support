@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import { api } from '../utils/api';
 import './StaffManagement.css';
+import { useToast } from '../context/ToastContext';
 
 function StaffManagement() {
   const [users, setUsers] = useState([]);
@@ -19,6 +20,7 @@ function StaffManagement() {
   useEffect(() => {
     loadUsers();
   }, []);
+  const toast = useToast();
 
   const loadUsers = async () => {
     try {
@@ -35,8 +37,9 @@ function StaffManagement() {
     try {
       await api.updateUser(userId, { role: newRole });
       setUsers((prev) => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
+      toast.success('Role updated');
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to update role');
+      toast.error(error.response?.data?.error || 'Failed to update role');
     }
   };
 
@@ -55,7 +58,7 @@ function StaffManagement() {
       });
       loadUsers();
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to create user');
+      toast.error(error.response?.data?.error || 'Failed to create user');
     }
   };
 
