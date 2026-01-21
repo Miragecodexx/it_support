@@ -41,6 +41,11 @@ app.get('/uploads/:filename', (req, res, next) => {
 
 app.use('/uploads', express.static(uploadsDir));
 
+// Health check / root route
+app.get('/', (req, res) => {
+  res.json({ message: 'Ticket Management System API Server', status: 'online' });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);

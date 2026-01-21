@@ -158,7 +158,7 @@ function AdminTickets() {
                   <tr key={ticket.id}>
                     <td>
                       <a href="#" onClick={(e) => { e.preventDefault(); openModal(ticket); }} className="ticket-link">
-                        #{ticket.ticket_id}
+                        {ticket.ticket_id}
                       </a>
                     </td>
                     <td>{ticket.subject}</td>
@@ -194,7 +194,7 @@ function AdminTickets() {
       {showModal && selectedTicket && (
         <div className="modal-overlay">
           <div className="modal-card">
-            <h2>Dispatch Ticket #{selectedTicket.ticket_id}</h2>
+            <h2>Dispatch Ticket {selectedTicket.ticket_id}</h2>
             <form onSubmit={submitDispatch} className="dispatch-form">
               <div className="form-group">
                 <label>Assign To</label>

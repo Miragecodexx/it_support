@@ -89,7 +89,6 @@ function Login() {
                   <div className="input-wrapper">
                     <span className="input-icon">👤</span>
                     <input
-                      style={{ paddingLeft: '38px' }}
                       type="text"
                       placeholder="Enter your full name"
                       value={registerData.name}

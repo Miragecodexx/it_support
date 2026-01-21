@@ -160,9 +160,9 @@ function TicketDetail() {
               {isAdmin ? 'All Tickets' : 'My Tickets'}
             </Link>
             <span> / </span>
-            <span>Ticket #{ticket.ticket_id}</span>
+            <span>Ticket {ticket.ticket_id}</span>
           </div>
-          <h1>Ticket #{ticket.ticket_id}: {ticket.subject}</h1>
+          <h1>Ticket {ticket.ticket_id}: {ticket.subject}</h1>
           <div className="ticket-actions">
             <button onClick={() => setShowReplyForm(!showReplyForm)} className="action-btn">
               <span>➕</span> Add Reply
@@ -191,6 +191,8 @@ function TicketDetail() {
                   value={status}
                   onChange={(e) => handleStatusChange(e.target.value)}
                   className="status-select"
+                  aria-label="Change ticket status"
+                  title="Change the status of this ticket"
                 >
                   <option value="Open">Open</option>
                   <option value="In Progress">In Progress</option>

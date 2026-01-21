@@ -106,6 +106,7 @@ const ensureTicketColumns = () => {
       if (!existing.includes('sent_time')) toAdd.push("ALTER TABLE tickets ADD COLUMN sent_time TEXT");
       if (!existing.includes('technician')) toAdd.push("ALTER TABLE tickets ADD COLUMN technician TEXT");
       if (!existing.includes('sent_to')) toAdd.push("ALTER TABLE tickets ADD COLUMN sent_to TEXT");
+      if (!existing.includes('closed_at')) toAdd.push("ALTER TABLE tickets ADD COLUMN closed_at DATETIME");
 
       if (toAdd.length === 0) return resolve();
 

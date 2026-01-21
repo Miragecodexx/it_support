@@ -117,7 +117,7 @@ function UserDashboard() {
                     <tr key={ticket.id}>
                       <td>
                         <Link to={`/ticket/${ticket.id}`} className="ticket-link">
-                          #{ticket.ticket_id}
+                          {ticket.ticket_id}
                         </Link>
                       </td>
                       <td>{ticket.subject}</td>

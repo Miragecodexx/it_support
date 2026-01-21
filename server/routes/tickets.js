@@ -278,6 +278,10 @@ router.put('/:id', authenticate, (req, res) => {
     if (status !== undefined) {
       updates.push('status = ?');
       params.push(status);
+      // Set closed_at when ticket is marked as closed
+      if (status.toLowerCase() === 'closed' && ticket.status.toLowerCase() !== 'closed') {
+        updates.push('closed_at = CURRENT_TIMESTAMP');
+      }
     }
     if (priority !== undefined) {
       updates.push('priority = ?');

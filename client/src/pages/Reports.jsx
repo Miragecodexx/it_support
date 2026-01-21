@@ -110,7 +110,7 @@ function Reports() {
   };
 
   const calculateAvgResolution = (tickets) => {
-    const closedTickets = tickets.filter(t => t.status === 'closed' && t.closed_at);
+    const closedTickets = tickets.filter(t => (t.status === 'Closed' || t.status === 'closed') && t.closed_at);
     if (closedTickets.length === 0) return 'N/A';
 
     const totalTime = closedTickets.reduce((sum, t) => {
