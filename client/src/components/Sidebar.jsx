@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
 import './Sidebar.css';
 
 function Sidebar({ isAdmin = false }) {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const userMenuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
@@ -24,7 +26,13 @@ function Sidebar({ isAdmin = false }) {
   const menuItems = isAdmin ? adminMenuItems : userMenuItems;
 
   return (
-    <div className="sidebar">
+    <>
+      <div className="topbar">
+        <button className="hamburger" aria-label="Open menu" onClick={() => setDrawerOpen(true)}>☰</button>
+        <div className="topbar-title">IT Support Portal</div>
+      </div>
+
+      <div className="sidebar">
       <div className="sidebar-header">
         <div className="sidebar-logo">
           <div className="logo-icon">◆</div>
@@ -61,7 +69,38 @@ function Sidebar({ isAdmin = false }) {
           <span>🚪</span> Logout
         </button>
       </div>
-    </div>
+      </div>
+
+      {drawerOpen && (
+        <div className="mobile-drawer" role="dialog" aria-modal="true">
+          <div className="drawer-content">
+            <div className="drawer-header">
+              <div className="logo-title">IT Support Portal</div>
+              <button className="drawer-close" aria-label="Close menu" onClick={() => setDrawerOpen(false)}>✕</button>
+            </div>
+
+            <nav className="drawer-nav">
+              {menuItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  <span className="nav-label">{item.label}</span>
+                </Link>
+              ))}
+            </nav>
+
+            <div className="drawer-footer">
+              <button onClick={() => { setDrawerOpen(false); logout(); }} className="logout-button">Logout</button>
+            </div>
+          </div>
+          <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />
+        </div>
+      )}
+    </>
   );
 }
 
