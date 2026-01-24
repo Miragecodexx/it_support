@@ -28,28 +28,8 @@ code {
 @media (max-width: 768px) {
   body {
     padding-top: 64px;
-    font-size: 16px;
-    -webkit-text-size-adjust: 100%;
   }
   #root {
     min-height: calc(100vh - 64px);
-  }
-}
-
-/* Larger tap targets and form controls on small screens */
-@media (max-width: 768px) {
-  button, input[type="button"], input[type="submit"], .logout-button {
-    min-height: 44px;
-    padding: 10px 14px;
-    font-size: 1rem;
-  }
-
-  input, textarea, select {
-    font-size: 1rem;
-    padding: 10px 12px;
-  }
-
-  .card, .ticket-item {
-    padding: 12px;
   }
 }

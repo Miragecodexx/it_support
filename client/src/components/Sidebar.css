@@ -3,102 +3,53 @@
   background: #1e293b;
   min-height: 100vh;
   display: flex;
-/* Mobile topbar + drawer */
-.topbar {
-  display: none;
-}
-
-.mobile-drawer {
-  position: fixed;
-  inset: 0;
-  z-index: 1100;
-  display: flex;
-  align-items: stretch;
-}
-
-.drawer-content {
-  width: 280px;
-  background: #0f172a;
-  border-right: 1px solid #334155;
-  padding: 12px;
-  display: flex;
   flex-direction: column;
+  border-right: 1px solid #334155;
 }
 
-.drawer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 8px;
+.sidebar-header {
+  padding: 20px;
   border-bottom: 1px solid #334155;
 }
 
-.drawer-close {
-  background: transparent;
-  border: none;
-  color: #e2e8f0;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-.drawer-nav {
+.sidebar-logo {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 12px;
-  overflow-y: auto;
+  align-items: center;
+  gap: 12px;
 }
 
-.drawer-footer {
-  margin-top: auto;
-  padding-top: 12px;
+.logo-icon {
+  font-size: 28px;
+  color: #3b82f6;
 }
 
-.drawer-backdrop {
-  flex: 1 1 auto;
-  background: rgba(0,0,0,0.45);
+.logo-title {
+  font-weight: 600;
+  color: #e2e8f0;
+  font-size: 0.95rem;
 }
 
-/* topbar shown only on small screens; hide desktop sidebar */
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .topbar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    background: #0f172a;
-    border-bottom: 1px solid #334155;
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    z-index: 1000;
-  }
-
-  .topbar-title {
-    color: #e2e8f0;
-    font-weight: 600;
-    font-size: 1rem;
-  }
-
-  .hamburger {
-    background: transparent;
-    border: none;
-    color: #e2e8f0;
-    font-size: 1.4rem;
-    padding: 6px;
-  }
-
-  /* make nav items larger for touch */
-  .nav-item {
-    padding: 14px 12px;
-    font-size: 1rem;
-    border-left-width: 0;
-  }
-
-  .nav-label { display: inline-block; }
+.logo-subtitle {
+  color: #94a3b8;
+  font-size: 0.85rem;
 }
+
+.sidebar-user {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #334155;
+}
+
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: white;
   font-weight: 600;
   font-size: 1.1rem;
