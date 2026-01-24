@@ -126,15 +126,12 @@ const ensureTicketColumns = () => {
 
 const createDefaultAdmin = async () => {
   return new Promise((resolve, reject) => {
-    // Read default admin credentials from environment variables. This avoids
-    // committing default credentials into source code where they can be discovered.
-    const email = process.env.DEFAULT_ADMIN_EMAIL;
-    const password = process.env.DEFAULT_ADMIN_PASSWORD;
-
-    if (!email || !password) {
-      console.log('No DEFAULT_ADMIN_EMAIL / DEFAULT_ADMIN_PASSWORD set; skipping default admin creation.');
-      return resolve();
-    }
+    // Read default admin credentials from environment variables, but
+    // fall back to the original defaults for convenience in development.
+    // WARNING: For production, set the DEFAULT_ADMIN_EMAIL and
+    // DEFAULT_ADMIN_PASSWORD environment variables and avoid the defaults.
+    const email = process.env.DEFAULT_ADMIN_EMAIL || 'admin@example.com';
+    const password = process.env.DEFAULT_ADMIN_PASSWORD || 'admin123';
 
     const hashedPassword = bcrypt.hashSync(password, 10);
 

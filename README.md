@@ -69,11 +69,7 @@ Prerequisites
 
 ## Default Login Credentials
 
-Admin Account:
-- Email: `admin@example.com`
-- Password: `admin123`
-
-Note: You can create additional users through the admin panel or by registering new accounts.
+By default the system can create an initial admin user on first run. For production, set `DEFAULT_ADMIN_EMAIL` and `DEFAULT_ADMIN_PASSWORD` in your environment to control the initial administrator credentials. If you don't set those variables, a development default may be created — change the password immediately after logging in.
 
 
 
