@@ -126,8 +126,16 @@ const ensureTicketColumns = () => {
 
 const createDefaultAdmin = async () => {
   return new Promise((resolve, reject) => {
-    const email = 'admin@example.com';
-    const password = 'admin123';
+    // Read default admin credentials from environment variables. This avoids
+    // committing default credentials into source code where they can be discovered.
+    const email = process.env.DEFAULT_ADMIN_EMAIL;
+    const password = process.env.DEFAULT_ADMIN_PASSWORD;
+
+    if (!email || !password) {
+      console.log('No DEFAULT_ADMIN_EMAIL / DEFAULT_ADMIN_PASSWORD set; skipping default admin creation.');
+      return resolve();
+    }
+
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
@@ -144,7 +152,7 @@ const createDefaultAdmin = async () => {
             if (err) {
               reject(err);
             } else {
-              console.log('Default admin user created (email: admin@example.com, password: admin123)');
+              console.log(`Default admin user created (email: ${email}).`);
               resolve();
             }
           }

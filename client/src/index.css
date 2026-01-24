@@ -23,3 +23,13 @@ code {
 #root {
   min-height: 100vh;
 }
+
+/* Ensure content is not hidden under fixed top sidebar on small screens */
+@media (max-width: 768px) {
+  body {
+    padding-top: 64px;
+  }
+  #root {
+    min-height: calc(100vh - 64px);
+  }
+}
