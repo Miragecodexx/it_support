@@ -15,8 +15,22 @@ const { Server } = require('socket.io');
 const socketManager = require('./utils/socket');
 
 // Middleware
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://it-support-1.onrender.com';
-app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
+// Allow a comma-separated list of allowed client origins via
+// `CLIENT_ORIGINS` env var, defaulting to the two Render sites.
+const CLIENT_ORIGINS = (process.env.CLIENT_ORIGINS || 'https://it-support-1.onrender.com,https://it-support-2.onrender.com')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // allow non-browser requests like curl/postman (no origin)
+    if (!origin) return callback(null, true);
+    if (CLIENT_ORIGINS.indexOf(origin) !== -1) return callback(null, true);
+    return callback(new Error('CORS policy: origin not allowed'));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -62,7 +76,7 @@ db.init()
     const server = http.createServer(app);
     const io = new Server(server, {
       cors: {
-        origin: CLIENT_ORIGIN,
+        origin: CLIENT_ORIGINS,
         methods: ['GET', 'POST']
       }
     });
