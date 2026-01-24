@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+// Ensure axios uses the production server URL by default so all API calls
+// and sockets point to the intended Render URL unless overridden.
+axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL || 'https://it-support-1.onrender.com';
+
 const API_BASE = '/api';
 
 export const api = {

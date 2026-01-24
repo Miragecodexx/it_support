@@ -15,7 +15,8 @@ const { Server } = require('socket.io');
 const socketManager = require('./utils/socket');
 
 // Middleware
-app.use(cors());
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://it-support-1.onrender.com';
+app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -61,7 +62,7 @@ db.init()
     const server = http.createServer(app);
     const io = new Server(server, {
       cors: {
-        origin: process.env.CLIENT_ORIGIN || '*',
+        origin: CLIENT_ORIGIN,
         methods: ['GET', 'POST']
       }
     });

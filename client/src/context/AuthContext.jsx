@@ -19,6 +19,10 @@ export const AuthProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const toast = useToast();
 
+  // server URL for API and socket connections
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'https://it-support-1.onrender.com';
+  axios.defaults.baseURL = SERVER_URL;
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -58,8 +62,8 @@ export const AuthProvider = ({ children }) => {
 
   const connectSocket = (user) => {
     try {
-      // default to server on port 5000 if not provided
-      const serverUrl = import.meta.env.VITE_SERVER_URL || `${window.location.protocol}//${window.location.hostname}:5000`;
+      // always use configured server URL (or VITE override)
+      const serverUrl = SERVER_URL;
       const s = io(serverUrl, { transports: ['websocket', 'polling'] });
       s.on('connect', () => {
         s.emit('join', { userId: user.id, role: user.role });
